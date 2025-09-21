@@ -11,24 +11,74 @@ declare const self: ServiceWorkerGlobalScope & { __WB_MANIFEST: any }
 
 clientsClaim()
 
+// Enhanced precaching with better offline support
 precacheAndRoute(self.__WB_MANIFEST)
 
+// Enhanced asset caching for better offline support
 registerRoute(
   ({ request }) =>
     request.destination === 'style' ||
     request.destination === 'script' ||
-    request.destination === 'worker',
+    request.destination === 'worker' ||
+    request.destination === 'manifest',
   new StaleWhileRevalidate({
     cacheName: 'asset-cache',
-    plugins: [new ExpirationPlugin({ maxEntries: 60, maxAgeSeconds: 30 * 24 * 60 * 60 })],
+    plugins: [
+      new ExpirationPlugin({ 
+        maxEntries: 100, 
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+        purgeOnQuotaError: true
+      })
+    ],
   })
 )
 
+// Enhanced image caching with better offline support
 registerRoute(
   ({ request }) => request.destination === 'image',
   new CacheFirst({
     cacheName: 'image-cache',
-    plugins: [new ExpirationPlugin({ maxEntries: 60, maxAgeSeconds: 30 * 24 * 60 * 60 })],
+    plugins: [
+      new ExpirationPlugin({ 
+        maxEntries: 100, 
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+        purgeOnQuotaError: true
+      })
+    ],
+  })
+)
+
+// Cache fonts for offline use
+registerRoute(
+  ({ request }) => request.destination === 'font',
+  new CacheFirst({
+    cacheName: 'font-cache',
+    plugins: [
+      new ExpirationPlugin({ 
+        maxEntries: 30, 
+        maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
+        purgeOnQuotaError: true
+      })
+    ],
+  })
+)
+
+// Cache other static assets
+registerRoute(
+  ({ request }) => 
+    request.destination === 'document' ||
+    request.destination === 'audio' ||
+    request.destination === 'video',
+  new NetworkFirst({
+    cacheName: 'static-assets-cache',
+    networkTimeoutSeconds: 3,
+    plugins: [
+      new ExpirationPlugin({ 
+        maxEntries: 50, 
+        maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+        purgeOnQuotaError: true
+      })
+    ],
   })
 )
 
@@ -50,20 +100,83 @@ registerRoute(
   new NetworkFirst({ cacheName: 'api-mutations', plugins: [bgSyncPlugin] })
 )
 
+// Enhanced message handling for better offline support
 self.addEventListener('message', (event) => {
   if (event.data && typeof event.data === 'object') {
-    if (event.data.type === 'SKIP_WAITING') self.skipWaiting()
+    if (event.data.type === 'SKIP_WAITING') {
+      self.skipWaiting()
+    }
+    if (event.data.type === 'GET_VERSION') {
+      event.ports[0].postMessage({ version: '2024.12.17.200000' })
+    }
+    if (event.data.type === 'CLEAR_CACHE') {
+      clearAllCaches().then(() => {
+        event.ports[0].postMessage({ success: true })
+      })
+    }
   }
 })
 
-// Handle SPA navigation with a more robust strategy
+// Add cache management functions
+async function clearAllCaches() {
+  const cacheNames = await caches.keys()
+  await Promise.all(
+    cacheNames.map(cacheName => caches.delete(cacheName))
+  )
+}
+
+// Add install event for better offline setup
+self.addEventListener('install', (_event) => {
+  console.log('Service Worker installing...')
+  self.skipWaiting()
+})
+
+// Add activate event for cache cleanup
+self.addEventListener('activate', (event) => {
+  console.log('Service Worker activating...')
+  event.waitUntil(
+    Promise.all([
+      self.clients.claim(),
+      clearOldCaches()
+    ])
+  )
+})
+
+async function clearOldCaches() {
+  const cacheNames = await caches.keys()
+  const currentCaches = [
+    'asset-cache',
+    'image-cache', 
+    'font-cache',
+    'static-assets-cache',
+    'api-cache',
+    'api-mutations',
+    'spa-navigation-cache',
+    'main-page-cache'
+  ]
+  
+  return Promise.all(
+    cacheNames
+      .filter(cacheName => !currentCaches.some(current => cacheName.includes(current)))
+      .map(cacheName => {
+        console.log(`Deleting old cache: ${cacheName}`)
+        return caches.delete(cacheName)
+      })
+  )
+}
+
+// Handle SPA navigation with enhanced offline support
 registerRoute(
   ({ request }) => request.mode === 'navigate',
   new NetworkFirst({
     cacheName: 'spa-navigation-cache',
     networkTimeoutSeconds: 3,
     plugins: [
-      new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 24 * 60 * 60 }),
+      new ExpirationPlugin({ 
+        maxEntries: 50, 
+        maxAgeSeconds: 24 * 60 * 60,
+        purgeOnQuotaError: true
+      }),
       // Add a custom plugin to handle navigation failures
       {
         cacheKeyWillBeUsed: async ({ request }) => {
@@ -72,6 +185,9 @@ registerRoute(
         cacheWillUpdate: async ({ response }) => {
           // Only cache successful responses
           return response.status === 200 ? response : null
+        },
+        cacheDidUpdate: async ({ request }) => {
+          console.log(`Updated navigation cache for ${request.url}`)
         }
       }
     ]
