@@ -7,6 +7,68 @@
   "start_url": "/",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
+  "shortcuts": [
+    {
+      "name": "Start Plant Tour",
+      "short_name": "Tour",
+      "description": "Begin a new plant tour",
+      "url": "/?action=start-tour",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Code Verification",
+      "short_name": "Code",
+      "description": "Verify product codes",
+      "url": "/?action=code-verification",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Net Weight Monitoring",
+      "short_name": "Weight",
+      "description": "Monitor net weight records",
+      "url": "/?action=net-weight",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Product Monitoring",
+      "short_name": "Product",
+      "description": "Monitor product quality",
+      "url": "/?action=product-monitoring",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "ALC Records",
+      "short_name": "ALC",
+      "description": "Access ALC verification records",
+      "url": "/?action=alc-records",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
   "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "theme_color": "#3b82f6",
