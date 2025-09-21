@@ -11,6 +11,19 @@
   "scope": "/",
   "lang": "en",
   "categories": ["productivity", "business"],
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.ptms.app",
+      "id": "com.ptms.app"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/app/plant-tour-management-system/id123456789",
+      "id": "123456789"
+    }
+  ],
   "screenshots": [
     {
       "src": "./assets/screenshot-mobile-1.png",
