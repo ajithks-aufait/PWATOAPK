@@ -138,6 +138,75 @@
       ]
     }
   },
+  "widgets": [
+    {
+      "name": "Plant Tour Quick Access",
+      "short_name": "PTMS Widget",
+      "description": "Quick access to plant tour management features",
+      "tag": "ptms-quick-access",
+      "template": "ptms-widget",
+      "ms_ac_template": "ptms-widget",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        },
+        {
+          "src": "/icons/icon-512x512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ],
+      "screenshots": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "label": "Plant Tour Management Widget"
+        }
+      ],
+      "categories": ["productivity", "business"],
+      "auth": false,
+      "update": 86400
+    },
+    {
+      "name": "Tour Status Widget",
+      "short_name": "Tour Status",
+      "description": "Monitor current plant tour status and progress",
+      "tag": "ptms-tour-status",
+      "template": "tour-status-widget",
+      "ms_ac_template": "tour-status-widget",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ],
+      "categories": ["productivity", "business"],
+      "auth": false,
+      "update": 300
+    },
+    {
+      "name": "Quality Check Widget",
+      "short_name": "Quality Check",
+      "description": "Quick access to quality check forms and records",
+      "tag": "ptms-quality-check",
+      "template": "quality-check-widget",
+      "ms_ac_template": "quality-check-widget",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ],
+      "categories": ["productivity", "business"],
+      "auth": false,
+      "update": 1800
+    }
+  ],
   "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "theme_color": "#3b82f6",
