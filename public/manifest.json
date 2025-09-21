@@ -69,6 +69,52 @@
       ]
     }
   ],
+  "file_handlers": [
+    {
+      "action": "/?action=open-file",
+      "accept": {
+        "text/csv": [".csv"],
+        "application/vnd.ms-excel": [".xls"],
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+        "application/pdf": [".pdf"],
+        "text/plain": [".txt"],
+        "application/json": [".json"],
+        "text/xml": [".xml"],
+        "application/xml": [".xml"],
+        "image/jpeg": [".jpg", ".jpeg"],
+        "image/png": [".png"],
+        "image/gif": [".gif"],
+        "image/webp": [".webp"]
+      }
+    },
+    {
+      "action": "/?action=import-data",
+      "accept": {
+        "text/csv": [".csv"],
+        "application/vnd.ms-excel": [".xls"],
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+        "application/json": [".json"]
+      }
+    },
+    {
+      "action": "/?action=view-document",
+      "accept": {
+        "application/pdf": [".pdf"],
+        "text/plain": [".txt"],
+        "text/xml": [".xml"],
+        "application/xml": [".xml"]
+      }
+    },
+    {
+      "action": "/?action=view-image",
+      "accept": {
+        "image/jpeg": [".jpg", ".jpeg"],
+        "image/png": [".png"],
+        "image/gif": [".gif"],
+        "image/webp": [".webp"]
+      }
+    }
+  ],
   "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "theme_color": "#3b82f6",
