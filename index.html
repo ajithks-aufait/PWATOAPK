@@ -23,12 +23,6 @@
     <meta name="msapplication-tooltip" content="Plant Tour Management System" />
     <meta name="msapplication-starturl" content="/" />
     
-    <!-- Cross-Origin and Scope Extensions Meta Tags -->
-    <meta http-equiv="Cross-Origin-Embedder-Policy" content="unsafe-none" />
-    <meta http-equiv="Cross-Origin-Opener-Policy" content="unsafe-none" />
-    <meta name="cross-origin-isolated" content="true" />
-    <meta name="scope-extensions" content="https://api.ptms.com,https://docs.ptms.com,https://support.ptms.com,https://cdn.ptms.com" />
-    
     <!-- CSP temporarily disabled for PWA-to-APK conversion testing -->
     
     <!-- PWA Icons -->
@@ -37,7 +31,7 @@
     <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png" />
     <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png" />
-    <link rel="manifest" href="/manifest.json?v=20241217400000" />
+    <link rel="manifest" href="/manifest.json" />
     
     <title>Plant Tour Management System</title>
     
@@ -80,16 +74,5 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- Force Service Worker Update -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-          for(let registration of registrations) {
-            registration.update();
-          }
-        });
-      }
-    </script>
   </body>
 </html>

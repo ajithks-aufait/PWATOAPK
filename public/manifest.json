@@ -2,97 +2,15 @@
   "id": "/",
   "name": "Plant Tour Management System",
   "short_name": "PTMS",
-  "version": "2024.12.17.400000",
   "description": "Plant Tour Management System - Offline PWA Application",
   "start_url": "/",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "theme_color": "#3b82f6",
   "scope": "/",
-  "scope_extensions": [
-    {
-      "origin": "https://api.ptms.com"
-    },
-    {
-      "origin": "https://docs.ptms.com"
-    },
-    {
-      "origin": "https://support.ptms.com"
-    },
-    {
-      "origin": "https://cdn.ptms.com"
-    }
-  ],
-  "scope_origins": [
-    "https://api.ptms.com",
-    "https://docs.ptms.com",
-    "https://support.ptms.com",
-    "https://cdn.ptms.com"
-  ],
-  "cross_origin_embedder_policy": "unsafe-none",
-  "cross_origin_opener_policy": "unsafe-none",
-  "permissions": [
-    "cross-origin-isolated"
-  ],
-  "feature_policy": {
-    "cross-origin-isolated": "*"
-  },
   "lang": "en",
-  "dir": "ltr",
   "categories": ["productivity", "business"],
-  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
-  "prefer_related_applications": false,
-  "related_applications": [
-    {
-      "platform": "play",
-      "url": "https://play.google.com/store/apps/details?id=com.ptms.app",
-      "id": "com.ptms.app"
-    },
-    {
-      "platform": "itunes",
-      "url": "https://apps.apple.com/app/plant-tour-management-system/id123456789",
-      "id": "123456789"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "./assets/screenshot-mobile-1.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Plant Tour Management System - Login Screen"
-    },
-    {
-      "src": "./assets/screenshot-mobile-2.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Plant Tour Management System - Home Dashboard"
-    },
-    {
-      "src": "./assets/screenshot-mobile-3.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Plant Tour Management System - Data Entry Forms"
-    },
-    {
-      "src": "./assets/screenshot-tablet-1.png",
-      "sizes": "1024x768",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Plant Tour Management System - Tablet View"
-    },
-    {
-      "src": "./assets/screenshot-tablet-2.png",
-      "sizes": "1024x768",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Plant Tour Management System - Wide Screen Layout"
-    }
-  ],
   "icons": [
     {
       "src": "./assets/icon-192x192.png",
