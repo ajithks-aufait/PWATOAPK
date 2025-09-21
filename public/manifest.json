@@ -2,7 +2,7 @@
   "id": "/",
   "name": "Plant Tour Management System",
   "short_name": "PTMS",
-  "version": "2024.12.17.123456",
+  "version": "2024.12.17.200000",
   "description": "Plant Tour Management System - Offline PWA Application",
   "start_url": "/",
   "display": "standalone",
@@ -12,18 +12,9 @@
   "theme_color": "#3b82f6",
   "scope": "/",
   "scope_extensions": [
-    {
-      "origin": "https://api.ptms.com",
-      "hasOriginWildcard": false
-    },
-    {
-      "origin": "https://docs.ptms.com",
-      "hasOriginWildcard": false
-    },
-    {
-      "origin": "https://support.ptms.com",
-      "hasOriginWildcard": false
-    }
+    "https://api.ptms.com",
+    "https://docs.ptms.com", 
+    "https://support.ptms.com"
   ],
   "lang": "en",
   "dir": "ltr",
