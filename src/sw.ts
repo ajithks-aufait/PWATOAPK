@@ -244,6 +244,53 @@ registerRoute(
   })
 )
 
+// Handle the home page specifically with enhanced caching
+registerRoute(
+  ({ url }) => url.pathname === '/home',
+  new NetworkFirst({
+    cacheName: 'home-page-cache',
+    networkTimeoutSeconds: 2,
+    plugins: [
+      new ExpirationPlugin({ maxEntries: 10, maxAgeSeconds: 24 * 60 * 60 }),
+      {
+        cacheWillUpdate: async ({ response }) => {
+          // Always cache the home page for offline access
+          console.log('Caching home page:', response.status)
+          return response.status === 200 ? response : null
+        },
+        cachedResponseWillBeUsed: async ({ cachedResponse }) => {
+          if (cachedResponse) {
+            console.log('Serving home page from cache for offline reload')
+            return cachedResponse
+          }
+          return null
+        }
+      }
+    ]
+  })
+)
+
+// Cache home page specific API calls and assets
+registerRoute(
+  ({ url, request }) => {
+    return url.pathname === '/home' || 
+           (url.pathname.startsWith('/api/') && request.headers.get('referer')?.includes('/home'))
+  },
+  new NetworkFirst({
+    cacheName: 'home-assets-cache',
+    networkTimeoutSeconds: 2,
+    plugins: [
+      new ExpirationPlugin({ maxEntries: 20, maxAgeSeconds: 24 * 60 * 60 }),
+      {
+        cacheWillUpdate: async ({ response }) => {
+          console.log('Caching home page assets/API:', response.status)
+          return response.status === 200 ? response : null
+        }
+      }
+    ]
+  })
+)
+
 // Define SPA routes for the Plant Tour Management System
 const spaRoutes = [
   '/', // Login page
@@ -267,13 +314,21 @@ spaRoutes.forEach((route) => {
     ({ url }) => url.pathname === route,
     new NetworkFirst({
       cacheName: `spa-route-${route.replace('/', '')}`,
-      networkTimeoutSeconds: 3,
+      networkTimeoutSeconds: 2,
       plugins: [
         new ExpirationPlugin({ maxEntries: 5, maxAgeSeconds: 24 * 60 * 60 }),
         {
           cacheWillUpdate: async ({ response }) => {
             // Only cache successful responses
+            console.log(`Caching ${route} page:`, response.status)
             return response.status === 200 ? response : null
+          },
+          cachedResponseWillBeUsed: async ({ cachedResponse }) => {
+            if (cachedResponse) {
+              console.log(`Serving ${route} page from cache for offline reload`)
+              return cachedResponse
+            }
+            return null
           }
         }
       ]
