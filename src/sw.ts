@@ -14,69 +14,9 @@ clientsClaim()
 // Enhanced precaching with better offline support
 precacheAndRoute(self.__WB_MANIFEST)
 
-// PWA Builder offline detection - specific offline route
-registerRoute(
-  ({ url }) => url.pathname === '/offline',
-  new CacheFirst({
-    cacheName: 'offline-page-cache',
-    plugins: [
-      new ExpirationPlugin({ 
-        maxEntries: 1, 
-        maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
-        purgeOnQuotaError: true
-      })
-    ]
-  })
-)
+// Removed offline page routes - not needed for same page reload functionality
 
-// Enhanced offline page fallback - ensure offline.html is always available
-registerRoute(
-  ({ url }) => url.pathname === '/offline.html',
-  new CacheFirst({
-    cacheName: 'offline-page-cache',
-    plugins: [
-      new ExpirationPlugin({ 
-        maxEntries: 1, 
-        maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
-        purgeOnQuotaError: true
-      })
-    ]
-  })
-)
-
-// PWA Builder offline detection - offline fallback for navigation
-registerRoute(
-  ({ request }) => request.mode === 'navigate',
-  new NetworkFirst({
-    cacheName: 'offline-navigation-cache',
-    networkTimeoutSeconds: 2,
-    plugins: [
-      new ExpirationPlugin({ 
-        maxEntries: 50, 
-        maxAgeSeconds: 24 * 60 * 60,
-        purgeOnQuotaError: true
-      }),
-      // Enhanced offline fallback plugin
-      {
-        cacheKeyWillBeUsed: async ({ request }) => {
-          return request.url
-        },
-        cacheWillUpdate: async ({ response }) => {
-          // Only cache successful responses
-          return response.status === 200 ? response : null
-        },
-        cacheDidUpdate: async ({ request }) => {
-          console.log(`Updated offline navigation cache for ${request.url}`)
-        },
-        // Custom offline fallback
-        requestWillFetch: async ({ request }) => {
-          // This ensures the request goes through even when offline
-          return request
-        }
-      }
-    ]
-  })
-)
+// Removed duplicate navigation route - the main navigation route below will handle all navigation
 
 // Enhanced asset caching for better offline support
 registerRoute(
@@ -215,73 +155,10 @@ self.addEventListener('install', (_event) => {
   self.skipWaiting()
 })
 
-// Enhanced offline page reload handling
-self.addEventListener('fetch', (event) => {
-  // Handle offline page reloads specifically
-  if (event.request.url.includes('/offline.html')) {
-    event.respondWith(
-      caches.match('/offline.html').then(response => {
-        if (response) {
-          return response
-        }
-        // If offline.html not in cache, try to fetch it
-        return fetch(event.request).catch(() => {
-          // Return a basic offline response if fetch fails
-          return new Response(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <title>Offline - Plant Tour Management System</title>
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-                .offline-container { max-width: 400px; margin: 0 auto; }
-                .retry-button { 
-                  background: #3b82f6; color: white; padding: 12px 24px; 
-                  border: none; border-radius: 6px; cursor: pointer; margin-top: 20px;
-                }
-              </style>
-            </head>
-            <body>
-              <div class="offline-container">
-                <h1>You're Offline</h1>
-                <p>Your Plant Tour Management System works offline. You can continue using the app with cached data.</p>
-                <button class="retry-button" onclick="window.location.reload()">Try Again</button>
-              </div>
-            </body>
-            </html>
-          `, {
-            status: 200,
-            headers: { 'Content-Type': 'text/html' }
-          })
-        })
-      })
-    )
-  }
-})
+// Removed problematic offline page redirect handling
+// The existing navigation routes will handle page reloads properly
 
-// PWA Builder offline detection - explicit offline event handling
-self.addEventListener('fetch', (event) => {
-  // Only handle non-navigation requests to avoid conflicts with existing navigation routes
-  if (event.request.mode !== 'navigate') {
-    // Handle other requests (API calls, assets, etc.)
-    event.respondWith(
-      fetch(event.request).catch(async () => {
-        // For non-navigation requests, try to serve from cache
-        const cachedResponse = await caches.match(event.request)
-        if (cachedResponse) {
-          return cachedResponse
-        }
-        // If no cache found, return a basic offline response
-        return new Response('Offline', { 
-          status: 503, 
-          statusText: 'Service Unavailable',
-          headers: { 'Content-Type': 'text/plain' }
-        })
-      })
-    )
-  }
-})
+// Removed explicit fetch handling - let Workbox handle all requests properly
 
 // PWA Builder offline detection - offline status handling
 self.addEventListener('message', (event) => {
@@ -333,7 +210,7 @@ async function clearOldCaches() {
   )
 }
 
-// Handle SPA navigation with enhanced offline support - same page reload
+// Handle SPA navigation with offline support - same page reload
 registerRoute(
   ({ request }) => request.mode === 'navigate',
   new NetworkFirst({
@@ -344,34 +221,12 @@ registerRoute(
         maxEntries: 50, 
         maxAgeSeconds: 24 * 60 * 60,
         purgeOnQuotaError: true
-      }),
-      // Enhanced plugin for same-page reload handling
-      {
-        cacheKeyWillBeUsed: async ({ request }) => {
-          // Use the exact URL to ensure same-page caching
-          return request.url
-        },
-        cacheWillUpdate: async ({ response }) => {
-          // Only cache successful responses for same-page reload
-          return response.status === 200 ? response : null
-        },
-        cacheDidUpdate: async ({ request }) => {
-          console.log(`Updated navigation cache for same page: ${request.url}`)
-        },
-        // Ensure same page is served from cache when offline
-        cachedResponseWillBeUsed: async ({ cachedResponse }) => {
-          if (cachedResponse) {
-            console.log('Serving same page from cache for offline reload')
-            return cachedResponse
-          }
-          return null
-        }
-      }
+      })
     ]
   })
 )
 
-// Handle the main page and login page specifically - same page reload
+// Handle the main page and login page specifically
 registerRoute(
   ({ url }) => url.pathname === '/' || url.pathname === '/index.html',
   new NetworkFirst({
@@ -383,14 +238,6 @@ registerRoute(
         cacheWillUpdate: async ({ response }) => {
           // Always cache the main page and login page for offline access
           return response.status === 200 ? response : null
-        },
-        // Ensure same page reload behavior
-        cachedResponseWillBeUsed: async ({ cachedResponse, request }) => {
-          if (cachedResponse) {
-            console.log(`Serving main page from cache for same-page reload: ${request.url}`)
-            return cachedResponse
-          }
-          return null
         }
       }
     ],
