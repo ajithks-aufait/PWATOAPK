@@ -207,6 +207,9 @@
       "update": 1800
     }
   ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
   "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "theme_color": "#3b82f6",
