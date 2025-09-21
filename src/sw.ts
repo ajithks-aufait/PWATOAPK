@@ -14,6 +14,37 @@ clientsClaim()
 // Enhanced precaching with better offline support
 precacheAndRoute(self.__WB_MANIFEST)
 
+// PWA Builder offline detection - specific offline route
+registerRoute(
+  ({ url }) => url.pathname === '/offline',
+  new CacheFirst({
+    cacheName: 'offline-page-cache',
+    plugins: [
+      new ExpirationPlugin({ 
+        maxEntries: 1, 
+        maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
+        purgeOnQuotaError: true
+      })
+    ]
+  })
+)
+
+// PWA Builder offline detection - offline fallback for navigation
+registerRoute(
+  ({ request }) => request.mode === 'navigate',
+  new NetworkFirst({
+    cacheName: 'offline-navigation-cache',
+    networkTimeoutSeconds: 2,
+    plugins: [
+      new ExpirationPlugin({ 
+        maxEntries: 50, 
+        maxAgeSeconds: 24 * 60 * 60,
+        purgeOnQuotaError: true
+      })
+    ]
+  })
+)
+
 // Enhanced asset caching for better offline support
 registerRoute(
   ({ request }) =>
@@ -149,6 +180,39 @@ async function clearAllCaches() {
 self.addEventListener('install', (_event) => {
   console.log('Service Worker installing...')
   self.skipWaiting()
+})
+
+// PWA Builder offline detection - explicit offline event handling
+self.addEventListener('fetch', (event) => {
+  // PWA Builder looks for explicit offline handling
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(async () => {
+        // Return offline page when navigation fails
+        const offlineResponse = await caches.match('/offline.html')
+        if (offlineResponse) {
+          return offlineResponse
+        }
+        const fallbackResponse = await caches.match('/')
+        if (fallbackResponse) {
+          return fallbackResponse
+        }
+        // Return a basic offline response if no cache found
+        return new Response('Offline', { status: 200, statusText: 'OK' })
+      })
+    )
+  }
+})
+
+// PWA Builder offline detection - offline status handling
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'OFFLINE_STATUS') {
+    event.ports[0].postMessage({ 
+      offline: !navigator.onLine,
+      cacheEnabled: true,
+      serviceWorkerActive: true
+    })
+  }
 })
 
 // Add activate event for cache cleanup

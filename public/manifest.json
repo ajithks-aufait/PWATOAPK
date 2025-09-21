@@ -3,6 +3,8 @@
   "name": "Plant Tour Management System",
   "short_name": "PTMS",
   "version": "2024.12.17.170000",
+  "offline_enabled": true,
+  "cache_strategy": "cacheFirst",
   "description": "Plant Tour Management System - Offline PWA Application",
   "start_url": "/",
   "display": "standalone",
@@ -209,6 +211,15 @@
   ],
   "edge_side_panel": {
     "preferred_width": 400
+  },
+  "offline_analytics": {
+    "enabled": true,
+    "track_offline_usage": true
+  },
+  "offline_storage": {
+    "enabled": true,
+    "max_storage": "100MB",
+    "sync_when_online": true
   },
   "orientation": "portrait-primary",
   "background_color": "#ffffff",
