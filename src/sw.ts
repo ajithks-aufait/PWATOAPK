@@ -24,17 +24,30 @@ registerRoute(
   createHandlerBoundToURL(process.env.PUBLIC_URL + '/index.html')
 )
 
-// Cache CSS, JS, and Web Worker requests with a Stale While Revalidate strategy
+// Cache CSS and Web Worker requests with a Stale While Revalidate strategy
 registerRoute(
   ({ request }) =>
     request.destination === 'style' ||
-    request.destination === 'script' ||
     request.destination === 'worker',
   new StaleWhileRevalidate({
     cacheName: 'asset-cache',
     plugins: [
       new ExpirationPlugin({
         maxEntries: 60,
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+      }),
+    ],
+  })
+)
+
+// Cache all JavaScript files with CacheFirst for offline reliability
+registerRoute(
+  ({ request }) => request.destination === 'script',
+  new CacheFirst({
+    cacheName: 'js-cache',
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 50,
         maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
       }),
     ],
@@ -95,6 +108,8 @@ self.addEventListener('message', (event) => {
     }
   }
 })
+
+// Removed custom fetch handler to avoid conflicts with Workbox routes
 
 // Cache navigation requests for SPA offline support
 registerRoute(
