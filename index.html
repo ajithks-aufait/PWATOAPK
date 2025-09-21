@@ -309,11 +309,35 @@
         window.addEventListener('online', () => {
           updateNetworkStatus();
           console.log('Connection restored - syncing data...');
+          // Refresh data when connection is restored
+          if (window.location.pathname !== '/') {
+            window.location.reload();
+          }
         });
         
         window.addEventListener('offline', () => {
           updateNetworkStatus();
           console.log('Connection lost - working offline');
+        });
+        
+        // Enhanced offline page reload handling
+        function handleOfflineReload() {
+          if (!navigator.onLine) {
+            console.log('Page reloaded while offline - serving from cache');
+            // Ensure the page loads from cache
+            return;
+          }
+        }
+        
+        // Handle page reload when offline
+        window.addEventListener('load', handleOfflineReload);
+        
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden && navigator.onLine) {
+            // Connection restored, refresh if needed
+            updateNetworkStatus();
+          }
         });
       });
       

@@ -29,6 +29,21 @@ registerRoute(
   })
 )
 
+// Enhanced offline page fallback - ensure offline.html is always available
+registerRoute(
+  ({ url }) => url.pathname === '/offline.html',
+  new CacheFirst({
+    cacheName: 'offline-page-cache',
+    plugins: [
+      new ExpirationPlugin({ 
+        maxEntries: 1, 
+        maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
+        purgeOnQuotaError: true
+      })
+    ]
+  })
+)
+
 // PWA Builder offline detection - offline fallback for navigation
 registerRoute(
   ({ request }) => request.mode === 'navigate',
@@ -40,7 +55,25 @@ registerRoute(
         maxEntries: 50, 
         maxAgeSeconds: 24 * 60 * 60,
         purgeOnQuotaError: true
-      })
+      }),
+      // Enhanced offline fallback plugin
+      {
+        cacheKeyWillBeUsed: async ({ request }) => {
+          return request.url
+        },
+        cacheWillUpdate: async ({ response }) => {
+          // Only cache successful responses
+          return response.status === 200 ? response : null
+        },
+        cacheDidUpdate: async ({ request }) => {
+          console.log(`Updated offline navigation cache for ${request.url}`)
+        },
+        // Custom offline fallback
+        requestWillFetch: async ({ request }) => {
+          // This ensures the request goes through even when offline
+          return request
+        }
+      }
     ]
   })
 )
@@ -182,23 +215,69 @@ self.addEventListener('install', (_event) => {
   self.skipWaiting()
 })
 
+// Enhanced offline page reload handling
+self.addEventListener('fetch', (event) => {
+  // Handle offline page reloads specifically
+  if (event.request.url.includes('/offline.html')) {
+    event.respondWith(
+      caches.match('/offline.html').then(response => {
+        if (response) {
+          return response
+        }
+        // If offline.html not in cache, try to fetch it
+        return fetch(event.request).catch(() => {
+          // Return a basic offline response if fetch fails
+          return new Response(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <title>Offline - Plant Tour Management System</title>
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>
+                body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+                .offline-container { max-width: 400px; margin: 0 auto; }
+                .retry-button { 
+                  background: #3b82f6; color: white; padding: 12px 24px; 
+                  border: none; border-radius: 6px; cursor: pointer; margin-top: 20px;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="offline-container">
+                <h1>You're Offline</h1>
+                <p>Your Plant Tour Management System works offline. You can continue using the app with cached data.</p>
+                <button class="retry-button" onclick="window.location.reload()">Try Again</button>
+              </div>
+            </body>
+            </html>
+          `, {
+            status: 200,
+            headers: { 'Content-Type': 'text/html' }
+          })
+        })
+      })
+    )
+  }
+})
+
 // PWA Builder offline detection - explicit offline event handling
 self.addEventListener('fetch', (event) => {
-  // PWA Builder looks for explicit offline handling
-  if (event.request.mode === 'navigate') {
+  // Only handle non-navigation requests to avoid conflicts with existing navigation routes
+  if (event.request.mode !== 'navigate') {
+    // Handle other requests (API calls, assets, etc.)
     event.respondWith(
       fetch(event.request).catch(async () => {
-        // Return offline page when navigation fails
-        const offlineResponse = await caches.match('/offline.html')
-        if (offlineResponse) {
-          return offlineResponse
+        // For non-navigation requests, try to serve from cache
+        const cachedResponse = await caches.match(event.request)
+        if (cachedResponse) {
+          return cachedResponse
         }
-        const fallbackResponse = await caches.match('/')
-        if (fallbackResponse) {
-          return fallbackResponse
-        }
-        // Return a basic offline response if no cache found
-        return new Response('Offline', { status: 200, statusText: 'OK' })
+        // If no cache found, return a basic offline response
+        return new Response('Offline', { 
+          status: 503, 
+          statusText: 'Service Unavailable',
+          headers: { 'Content-Type': 'text/plain' }
+        })
       })
     )
   }

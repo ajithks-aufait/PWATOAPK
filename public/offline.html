@@ -118,6 +118,50 @@
                 window.location.reload();
             }
         }, 5000);
+        
+        // Enhanced offline page reload handling
+        function handlePageReload() {
+            // Check if we're offline
+            if (!navigator.onLine) {
+                console.log('Page reloaded while offline - showing cached content');
+                // The page should load from cache
+                return;
+            }
+            
+            // If online, try to go back to main app
+            if (navigator.onLine) {
+                console.log('Connection restored - redirecting to main app');
+                window.location.href = '/';
+            }
+        }
+        
+        // Handle page load/reload
+        window.addEventListener('load', handlePageReload);
+        
+        // Handle page visibility changes (when user switches tabs and comes back)
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && navigator.onLine) {
+                window.location.href = '/';
+            }
+        });
+        
+        // Enhanced retry function
+        function retryConnection() {
+            if (navigator.onLine) {
+                window.location.href = '/';
+            } else {
+                // Still offline, try to reload the current page from cache
+                window.location.reload();
+            }
+        }
+        
+        // Update the retry button functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const retryButton = document.querySelector('.retry-button');
+            if (retryButton) {
+                retryButton.onclick = retryConnection;
+            }
+        });
     </script>
 </body>
 </html>
