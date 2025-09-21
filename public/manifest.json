@@ -11,6 +11,43 @@
   "scope": "/",
   "lang": "en",
   "categories": ["productivity", "business"],
+  "screenshots": [
+    {
+      "src": "./assets/screenshot-mobile-1.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Plant Tour Management System - Login Screen"
+    },
+    {
+      "src": "./assets/screenshot-mobile-2.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Plant Tour Management System - Home Dashboard"
+    },
+    {
+      "src": "./assets/screenshot-mobile-3.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Plant Tour Management System - Data Entry Forms"
+    },
+    {
+      "src": "./assets/screenshot-tablet-1.png",
+      "sizes": "1024x768",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Plant Tour Management System - Tablet View"
+    },
+    {
+      "src": "./assets/screenshot-tablet-2.png",
+      "sizes": "1024x768",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Plant Tour Management System - Wide Screen Layout"
+    }
+  ],
   "icons": [
     {
       "src": "./assets/icon-192x192.png",
