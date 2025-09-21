@@ -118,6 +118,10 @@
   "launch_handler": {
     "client_mode": "focus-existing"
   },
+  "note_taking": {
+    "new_note_url": "/?action=new-note",
+    "note_url": "/?action=view-note&id={id}"
+  },
   "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "theme_color": "#3b82f6",
