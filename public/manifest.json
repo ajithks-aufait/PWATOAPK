@@ -10,6 +10,17 @@
   "background_color": "#ffffff",
   "theme_color": "#3b82f6",
   "scope": "/",
+  "scope_extensions": [
+    {
+      "origin": "https://api.ptms.com"
+    },
+    {
+      "origin": "https://docs.ptms.com"
+    },
+    {
+      "origin": "https://support.ptms.com"
+    }
+  ],
   "lang": "en",
   "dir": "ltr",
   "categories": ["productivity", "business"],
