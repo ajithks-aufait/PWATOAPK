@@ -6,7 +6,7 @@
   "description": "Plant Tour Management System - Offline PWA Application",
   "start_url": "/",
   "display": "standalone",
-  "display_override": ["windows-control-overlay", "standalone", "minimal-ui"],
+  "display_override": ["tabbed", "windows-control-overlay", "standalone", "minimal-ui"],
   "shortcuts": [
     {
       "name": "Start Plant Tour",
