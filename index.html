@@ -31,7 +31,7 @@
     <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png" />
     <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png" />
-    <link rel="manifest" href="/manifest.json?v=1.0.2" />
+    <link rel="manifest" href="/manifest.json?v=20241217123456" />
     
     <title>Plant Tour Management System</title>
     
@@ -74,5 +74,16 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Force Service Worker Update -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.update();
+          }
+        });
+      }
+    </script>
   </body>
 </html>
