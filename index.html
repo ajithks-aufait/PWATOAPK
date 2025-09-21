@@ -233,6 +233,61 @@
       });
     </script>
     
+    <!-- Enhanced Offline Support Script -->
+    <script>
+      // Network status indicator
+      function updateNetworkStatus() {
+        const isOnline = navigator.onLine;
+        const statusIndicator = document.querySelector('.network-status');
+        
+        if (statusIndicator) {
+          statusIndicator.textContent = isOnline ? '🟢 Online' : '🔴 Offline';
+          statusIndicator.className = `network-status ${isOnline ? 'online' : 'offline'}`;
+        }
+      }
+      
+      // Create network status indicator
+      function createNetworkStatusIndicator() {
+        const indicator = document.createElement('div');
+        indicator.className = 'network-status online';
+        indicator.textContent = '🟢 Online';
+        indicator.style.cssText = `
+          position: fixed;
+          top: 10px;
+          right: 10px;
+          background: rgba(0, 0, 0, 0.8);
+          color: white;
+          padding: 8px 12px;
+          border-radius: 20px;
+          font-size: 12px;
+          font-weight: 500;
+          z-index: 10000;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
+        `;
+        
+        document.body.appendChild(indicator);
+        return indicator;
+      }
+      
+      // Initialize network status
+      document.addEventListener('DOMContentLoaded', () => {
+        createNetworkStatusIndicator();
+        updateNetworkStatus();
+        
+        // Listen for network changes
+        window.addEventListener('online', () => {
+          updateNetworkStatus();
+          console.log('Connection restored - syncing data...');
+        });
+        
+        window.addEventListener('offline', () => {
+          updateNetworkStatus();
+          console.log('Connection lost - working offline');
+        });
+      });
+    </script>
+    
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
