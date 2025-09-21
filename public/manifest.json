@@ -6,6 +6,7 @@
   "description": "Plant Tour Management System - Offline PWA Application",
   "start_url": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "theme_color": "#3b82f6",
