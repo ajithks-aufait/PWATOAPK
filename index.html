@@ -305,38 +305,40 @@
         updateNetworkStatus();
         registerServiceWorker();
         
-        // Listen for network changes
+        // Listen for network changes - reload same page
         window.addEventListener('online', () => {
           updateNetworkStatus();
-          console.log('Connection restored - syncing data...');
-          // Refresh data when connection is restored
-          if (window.location.pathname !== '/') {
-            window.location.reload();
-          }
+          console.log('Connection restored - syncing data and reloading same page...');
+          // Always reload the same page when connection is restored
+          window.location.reload();
         });
         
         window.addEventListener('offline', () => {
           updateNetworkStatus();
-          console.log('Connection lost - working offline');
+          console.log('Connection lost - working offline on same page');
         });
         
-        // Enhanced offline page reload handling
+        // Enhanced offline page reload handling - same page behavior
         function handleOfflineReload() {
           if (!navigator.onLine) {
-            console.log('Page reloaded while offline - serving from cache');
-            // Ensure the page loads from cache
+            console.log('Page reloaded while offline - serving same page from cache');
+            // Ensure the same page loads from cache
             return;
           }
+          // If online, the page should load normally
+          console.log('Page reloaded while online - loading same page');
         }
         
-        // Handle page reload when offline
+        // Handle page reload when offline - same page behavior
         window.addEventListener('load', handleOfflineReload);
         
-        // Handle page visibility changes
+        // Handle page visibility changes - same page behavior
         document.addEventListener('visibilitychange', () => {
           if (!document.hidden && navigator.onLine) {
-            // Connection restored, refresh if needed
+            // Connection restored, refresh same page
+            console.log('Tab focused and online - refreshing same page');
             updateNetworkStatus();
+            window.location.reload();
           }
         });
       });

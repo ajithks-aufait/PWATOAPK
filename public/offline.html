@@ -107,50 +107,59 @@
     </div>
 
     <script>
-        // Auto-retry when connection is restored
+        // Store the original page URL for same-page reload
+        const originalPageUrl = document.referrer || window.location.href;
+        
+        // Auto-retry when connection is restored - reload same page
         window.addEventListener('online', () => {
+            console.log('Connection restored - reloading same page');
+            // Reload the same page instead of redirecting
             window.location.reload();
         });
         
-        // Check connection status periodically
+        // Check connection status periodically - reload same page
         setInterval(() => {
             if (navigator.onLine) {
+                console.log('Connection restored - reloading same page');
                 window.location.reload();
             }
         }, 5000);
         
-        // Enhanced offline page reload handling
+        // Enhanced offline page reload handling - stay on same page
         function handlePageReload() {
             // Check if we're offline
             if (!navigator.onLine) {
-                console.log('Page reloaded while offline - showing cached content');
-                // The page should load from cache
+                console.log('Page reloaded while offline - showing cached content for same page');
+                // The page should load from cache - stay on same page
                 return;
             }
             
-            // If online, try to go back to main app
+            // If online, reload the same page instead of redirecting
             if (navigator.onLine) {
-                console.log('Connection restored - redirecting to main app');
-                window.location.href = '/';
+                console.log('Connection restored - reloading same page');
+                window.location.reload();
             }
         }
         
-        // Handle page load/reload
+        // Handle page load/reload - ensure same page behavior
         window.addEventListener('load', handlePageReload);
         
-        // Handle page visibility changes (when user switches tabs and comes back)
+        // Handle page visibility changes - reload same page
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden && navigator.onLine) {
-                window.location.href = '/';
+                console.log('Tab focused and online - reloading same page');
+                window.location.reload();
             }
         });
         
-        // Enhanced retry function
+        // Enhanced retry function - reload same page
         function retryConnection() {
             if (navigator.onLine) {
-                window.location.href = '/';
+                console.log('Retry button clicked - reloading same page');
+                window.location.reload();
             } else {
-                // Still offline, try to reload the current page from cache
+                // Still offline, reload the current page from cache
+                console.log('Still offline - reloading current page from cache');
                 window.location.reload();
             }
         }

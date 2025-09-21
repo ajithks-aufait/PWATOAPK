@@ -333,7 +333,7 @@ async function clearOldCaches() {
   )
 }
 
-// Handle SPA navigation with enhanced offline support
+// Handle SPA navigation with enhanced offline support - same page reload
 registerRoute(
   ({ request }) => request.mode === 'navigate',
   new NetworkFirst({
@@ -345,24 +345,33 @@ registerRoute(
         maxAgeSeconds: 24 * 60 * 60,
         purgeOnQuotaError: true
       }),
-      // Add a custom plugin to handle navigation failures
+      // Enhanced plugin for same-page reload handling
       {
         cacheKeyWillBeUsed: async ({ request }) => {
+          // Use the exact URL to ensure same-page caching
           return request.url
         },
         cacheWillUpdate: async ({ response }) => {
-          // Only cache successful responses
+          // Only cache successful responses for same-page reload
           return response.status === 200 ? response : null
         },
         cacheDidUpdate: async ({ request }) => {
-          console.log(`Updated navigation cache for ${request.url}`)
+          console.log(`Updated navigation cache for same page: ${request.url}`)
+        },
+        // Ensure same page is served from cache when offline
+        cachedResponseWillBeUsed: async ({ cachedResponse }) => {
+          if (cachedResponse) {
+            console.log('Serving same page from cache for offline reload')
+            return cachedResponse
+          }
+          return null
         }
       }
     ]
   })
 )
 
-// Handle the main page and login page specifically
+// Handle the main page and login page specifically - same page reload
 registerRoute(
   ({ url }) => url.pathname === '/' || url.pathname === '/index.html',
   new NetworkFirst({
@@ -374,6 +383,14 @@ registerRoute(
         cacheWillUpdate: async ({ response }) => {
           // Always cache the main page and login page for offline access
           return response.status === 200 ? response : null
+        },
+        // Ensure same page reload behavior
+        cachedResponseWillBeUsed: async ({ cachedResponse, request }) => {
+          if (cachedResponse) {
+            console.log(`Serving main page from cache for same-page reload: ${request.url}`)
+            return cachedResponse
+          }
+          return null
         }
       }
     ],
