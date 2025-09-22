@@ -27,8 +27,6 @@ import { setFetchedCycles as setNWMFetchedCycles, clearOfflineData as clearNWMOf
 import { clearOfflineData as clearBakingOfflineData } from "../store/BakingProcessSlice";
 import { clearOfflineData as clearOPRPAndCcpOfflineData } from "../store/OPRPAndCCPSlice";
 import { hasOfflineDataToSync, clearAllOfflineData } from "../Services/PlantTourSyncService";
-import { getAllOfflineData } from "../Services/PlantTourOfflineStorage";
-import { syncOfflineFiles, getMsalToken } from "../Services/BakingProcessFileUpload";
 import { setOfflineCriteriaList, setOfflineEmployeeDetails, setOfflineExistingObservations, setOfflineDataTimestamp, setOfflineMode } from "../store/planTourSlice";
 import { setPlantTourId as setPlantTourSectionPlantTourId } from "../store/plantTourSectionSlice";
 import { createOrFetchDepartmentTour } from "../Services/createOrFetchDepartmentTour";
@@ -175,6 +173,7 @@ export default function HomePage() {
     // Get Plant Tour Section offline data count
     let plantTourSectionOfflineCount = 0;
     try {
+      const { getAllOfflineData } = require('../Services/PlantTourOfflineStorage');
       const allPlantTourData = getAllOfflineData();
       plantTourSectionOfflineCount = Object.values(allPlantTourData).reduce((total: number, tourData: any) => {
         return total + (tourData.observations?.length || 0);
@@ -1573,34 +1572,6 @@ export default function HomePage() {
       console.log('No Baking Process offline data to sync');
     }
 
-    // Sync Baking Process offline images
-    try {
-      const state = store.getState();
-      const bakingOfflineFiles = state.bakingProcess.offlineFiles;
-      if (bakingOfflineFiles.length > 0) {
-        console.log('=== SYNCING BAKING PROCESS OFFLINE IMAGES ===');
-        console.log('Baking Process offline images found:', bakingOfflineFiles.length);
-        
-        const accessToken = await getMsalToken(instance, accounts);
-        if (accessToken) {
-          const imageSyncResult = await syncOfflineFiles(accessToken);
-          if (imageSyncResult.success) {
-            console.log('Successfully synced baking process images');
-            totalSynced += bakingOfflineFiles.length;
-          } else {
-            console.error('Failed to sync baking process images:', imageSyncResult);
-            totalErrors += bakingOfflineFiles.length;
-          }
-        } else {
-          console.error('No access token available for baking process image sync');
-          totalErrors += bakingOfflineFiles.length;
-        }
-      }
-    } catch (error) {
-      console.error('Error syncing baking process offline images:', error);
-      totalErrors++;
-    }
-
     // Sync Net Weight Monitoring offline data
     console.log('=== CHECKING NET WEIGHT MONITORING OFFLINE DATA ===');
     console.log('Net Weight Monitoring offline data length:', netWeightOfflineData.length);
@@ -2151,7 +2122,7 @@ export default function HomePage() {
                   disabled={!isOnline}
                   title={!isOnline ? 'Internet connection required to start offline mode' : 'Start offline mode'}
                 >
-                  + Start Offline Mode 
+                  + Start Offline Mode {totalOfflineCount > 0 && `(${totalOfflineCount})`}
                 </button>
                 {showOfflineError && (
                   <div className="w-full sm:w-auto text-xs text-red-600 mt-1">

@@ -84,7 +84,6 @@ const PlantTourSection: React.FC = () => {
   
   // State for tracking observation IDs for deletion
   const [observationIds, setObservationIds] = useState<{ [key: string]: { [questionId: string]: string } }>({});
-  console.log('observationIds', observationIds);
   
   // State for tour pause modal
   const [showPauseModal, setShowPauseModal] = useState(false);
@@ -406,6 +405,100 @@ const PlantTourSection: React.FC = () => {
     }
   };
 
+  // Handle clear criteria data
+  const handleClearCriteria = async (sectionName: string, questionId: string) => {
+    alert(`Clear button clicked for section: ${sectionName}, question: ${questionId}`);
+    console.log('Clear button clicked for:', { sectionName, questionId });
+    console.log('Current observationIds state:', observationIds);
+    
+    try {
+      if (isOfflineMode) {
+        // Delete from offline storage
+        console.log('Deleting observation from offline storage...');
+        const { deleteOfflineObservation } = await import('../Services/PlantTourOfflineStorage');
+        deleteOfflineObservation(plantTourId || '', sectionName, questionId);
+        console.log('Observation deleted from offline storage');
+        alert('Observation deleted from offline storage!');
+      } else {
+        // Check if there's an observation ID to delete
+        const observationId = observationIds[sectionName]?.[questionId];
+        console.log('Found observationId:', observationId);
+        
+        // Also check sessionStorage as fallback
+        const itemid = `uniqueID_${questionId}_${plantTourId}`;
+        const sessionStorageId = sessionStorage.getItem(itemid);
+        console.log('SessionStorage ID:', sessionStorageId);
+        
+        const idToDelete = observationId || sessionStorageId;
+        
+        if (idToDelete) {
+          console.log('Deleting observation with ID:', idToDelete);
+          alert(`Attempting to delete observation with ID: ${idToDelete}`);
+          
+          // Call delete API
+          await PlantTourService.deleteObservationFromAPI(idToDelete);
+          
+          // Clear from sessionStorage
+          sessionStorage.removeItem(itemid);
+          
+          console.log('Observation deleted successfully');
+          alert('Observation deleted successfully!');
+        } else {
+          console.log('No observation ID found to delete');
+          alert('No observation ID found to delete');
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting observation:', error);
+      // Continue with clearing the form even if deletion fails
+    }
+    
+    // Clear all form data
+    setChecklistResponses(prev => ({
+      ...prev,
+      [sectionName]: {
+        ...prev[sectionName],
+        [questionId]: ''
+      }
+    }));
+    
+    setCriteriaComments(prev => ({
+      ...prev,
+      [sectionName]: {
+        ...prev[sectionName],
+        [questionId]: ''
+      }
+    }));
+    
+    setCriteriaNearMiss(prev => ({
+      ...prev,
+      [sectionName]: {
+        ...prev[sectionName],
+        [questionId]: false
+      }
+    }));
+    
+    // Clear saved observation state
+    setSavedObservations(prev => ({
+      ...prev,
+      [sectionName]: {
+        ...prev[sectionName],
+        [questionId]: ''
+      }
+    }));
+    
+    // Clear observation ID
+    setObservationIds(prev => ({
+      ...prev,
+      [sectionName]: {
+        ...prev[sectionName],
+        [questionId]: ''
+      }
+    }));
+    
+    // Update tour statistics
+    updateTourStatistics();
+  };
 
 
   // Helper function to get severity ID based on response and near miss
@@ -1291,6 +1384,13 @@ const PlantTourSection: React.FC = () => {
                                 >
                                   {isSaving ? 'Saving...' : 'Save'}
                                 </button>
+                                <button
+                                  onClick={() => handleClearCriteria(areaName, criteria.id)}
+                                  disabled={isSaving}
+                                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  Clear
+                                </button>
                               </div>
                             </div>
                           )}
@@ -1338,6 +1438,13 @@ const PlantTourSection: React.FC = () => {
                                   className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                   {isSaving ? 'Saving...' : 'Save'}
+                                </button>
+                                <button
+                                  onClick={() => handleClearCriteria(areaName, criteria.id)}
+                                  disabled={isSaving}
+                                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  Clear
                                 </button>
                               </div>
                             </div>

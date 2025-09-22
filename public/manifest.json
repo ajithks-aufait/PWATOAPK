@@ -1,322 +1,42 @@
 {
-  "id": "/",
   "name": "Plant Tour Management System",
   "short_name": "PTMS",
-  "version": "2024.12.17.170000",
-  "offline_enabled": true,
-  "cache_strategy": "cacheFirst",
   "description": "Plant Tour Management System - Offline PWA Application",
   "start_url": "/",
   "display": "standalone",
-  "display_override": ["tabbed", "windows-control-overlay", "standalone", "minimal-ui"],
-  "shortcuts": [
-    {
-      "name": "Start Plant Tour",
-      "short_name": "Tour",
-      "description": "Begin a new plant tour",
-      "url": "/?action=start-tour",
-      "icons": [
-        {
-          "src": "/icons/icon-192x192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Code Verification",
-      "short_name": "Code",
-      "description": "Verify product codes",
-      "url": "/?action=code-verification",
-      "icons": [
-        {
-          "src": "/icons/icon-192x192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Net Weight Monitoring",
-      "short_name": "Weight",
-      "description": "Monitor net weight records",
-      "url": "/?action=net-weight",
-      "icons": [
-        {
-          "src": "/icons/icon-192x192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Product Monitoring",
-      "short_name": "Product",
-      "description": "Monitor product quality",
-      "url": "/?action=product-monitoring",
-      "icons": [
-        {
-          "src": "/icons/icon-192x192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "ALC Records",
-      "short_name": "ALC",
-      "description": "Access ALC verification records",
-      "url": "/?action=alc-records",
-      "icons": [
-        {
-          "src": "/icons/icon-192x192.png",
-          "sizes": "192x192"
-        }
-      ]
-    }
-  ],
-  "file_handlers": [
-    {
-      "action": "/?action=open-file",
-      "accept": {
-        "text/csv": [".csv"],
-        "application/vnd.ms-excel": [".xls"],
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
-        "application/pdf": [".pdf"],
-        "text/plain": [".txt"],
-        "application/json": [".json"],
-        "text/xml": [".xml"],
-        "application/xml": [".xml"],
-        "image/jpeg": [".jpg", ".jpeg"],
-        "image/png": [".png"],
-        "image/gif": [".gif"],
-        "image/webp": [".webp"]
-      }
-    },
-    {
-      "action": "/?action=import-data",
-      "accept": {
-        "text/csv": [".csv"],
-        "application/vnd.ms-excel": [".xls"],
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
-        "application/json": [".json"]
-      }
-    },
-    {
-      "action": "/?action=view-document",
-      "accept": {
-        "application/pdf": [".pdf"],
-        "text/plain": [".txt"],
-        "text/xml": [".xml"],
-        "application/xml": [".xml"]
-      }
-    },
-    {
-      "action": "/?action=view-image",
-      "accept": {
-        "image/jpeg": [".jpg", ".jpeg"],
-        "image/png": [".png"],
-        "image/gif": [".gif"],
-        "image/webp": [".webp"]
-      }
-    }
-  ],
-  "launch_handler": {
-    "client_mode": "focus-existing"
-  },
-  "note_taking": {
-    "new_note_url": "/?action=new-note",
-    "note_url": "/?action=view-note&id={id}"
-  },
-  "share_target": {
-    "action": "/?action=share",
-    "method": "POST",
-    "enctype": "multipart/form-data",
-    "params": {
-      "title": "title",
-      "text": "text",
-      "url": "url",
-      "files": [
-        {
-          "name": "files",
-          "accept": ["image/*", "text/csv", "application/pdf", "text/plain", "application/json"]
-        }
-      ]
-    }
-  },
-  "widgets": [
-    {
-      "name": "Plant Tour Quick Access",
-      "short_name": "PTMS Widget",
-      "description": "Quick access to plant tour management features",
-      "tag": "ptms-quick-access",
-      "template": "ptms-widget",
-      "ms_ac_template": "ptms-widget",
-      "icons": [
-        {
-          "src": "/icons/icon-192x192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        },
-        {
-          "src": "/icons/icon-512x512.png",
-          "sizes": "512x512",
-          "type": "image/png"
-        }
-      ],
-      "screenshots": [
-        {
-          "src": "/icons/icon-192x192.png",
-          "sizes": "192x192",
-          "type": "image/png",
-          "label": "Plant Tour Management Widget"
-        }
-      ],
-      "categories": ["productivity", "business"],
-      "auth": false,
-      "update": 86400
-    },
-    {
-      "name": "Tour Status Widget",
-      "short_name": "Tour Status",
-      "description": "Monitor current plant tour status and progress",
-      "tag": "ptms-tour-status",
-      "template": "tour-status-widget",
-      "ms_ac_template": "tour-status-widget",
-      "icons": [
-        {
-          "src": "/icons/icon-192x192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ],
-      "categories": ["productivity", "business"],
-      "auth": false,
-      "update": 300
-    },
-    {
-      "name": "Quality Check Widget",
-      "short_name": "Quality Check",
-      "description": "Quick access to quality check forms and records",
-      "tag": "ptms-quality-check",
-      "template": "quality-check-widget",
-      "ms_ac_template": "quality-check-widget",
-      "icons": [
-        {
-          "src": "/icons/icon-192x192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ],
-      "categories": ["productivity", "business"],
-      "auth": false,
-      "update": 1800
-    }
-  ],
-  "edge_side_panel": {
-    "preferred_width": 400
-  },
-  "offline_analytics": {
-    "enabled": true,
-    "track_offline_usage": true
-  },
-  "offline_storage": {
-    "enabled": true,
-    "max_storage": "100MB",
-    "sync_when_online": true
-  },
   "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "theme_color": "#3b82f6",
   "scope": "/",
-  "scope_extensions": [
-    {
-      "origin": "https://api.ptms.com"
-    },
-    {
-      "origin": "https://docs.ptms.com"
-    },
-    {
-      "origin": "https://support.ptms.com"
-    }
-  ],
   "lang": "en",
-  "dir": "ltr",
   "categories": ["productivity", "business"],
-  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
-  "prefer_related_applications": false,
-  "related_applications": [
-    {
-      "platform": "play",
-      "url": "https://play.google.com/store/apps/details?id=com.ptms.app",
-      "id": "com.ptms.app"
-    },
-    {
-      "platform": "itunes",
-      "url": "https://apps.apple.com/app/plant-tour-management-system/id123456789",
-      "id": "123456789"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "./assets/screenshot-mobile-1.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Plant Tour Management System - Login Screen"
-    },
-    {
-      "src": "./assets/screenshot-mobile-2.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Plant Tour Management System - Home Dashboard"
-    },
-    {
-      "src": "./assets/screenshot-mobile-3.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Plant Tour Management System - Data Entry Forms"
-    },
-    {
-      "src": "./assets/screenshot-tablet-1.png",
-      "sizes": "1024x768",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Plant Tour Management System - Tablet View"
-    },
-    {
-      "src": "./assets/screenshot-tablet-2.png",
-      "sizes": "1024x768",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Plant Tour Management System - Wide Screen Layout"
-    }
-  ],
   "icons": [
     {
-      "src": "./assets/icon-192x192.png",
+      "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./assets/icon-192x192.png",
+      "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "./assets/icon-512x512.png",
+      "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./assets/icon-512x512.png",
+      "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "./assets/icon.svg",
+      "src": "/icons/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
